@@ -1,0 +1,20 @@
+* Usage
+** config.csv formatting
+Needs to have the following Columns (case sensitive):
+City, Year, file identifier, Beginning, Ending, Ignore
+* version history
+** 1.0.0
+Functional.  Will do a simple symlink to the photos (regardless of file type) into a generated directory, sorting them as directed by a 'config.csv'
+** 1.0.1 to 1.0.3
+Rearranged code to include classes.  Working on adding a category to CSV to ignore certain photos.
+* Future Modifications
+** [C] Better File Support
+*** Add recognition of RAW files, and do not symlink.  Instead, generate a list of the files that are RAW, and ask for conversion (or do the conversion if possible using RAWtherapee).
+**** Could add an extra function for the sorting of RAW files? Don't see much need right now
+*** Same concept with side-car files (*.CR2.pp3)
+** [C] Add PYQT5 interface
+*** Possible side-function development then is to add detection or setting of a photo import from camera function
+** [B] Add extra Folder naming for Event if category exists
+*** Add an extra column in config.csv for Event.  If exists, add it as a variable to the file name
+** [A] Add metadata processing (Will bump to V.2 when added)
+Using Pillow, access metadata to rearrange pictures.  This will make it easier to sort pictures from multiple cameras by simply stating in the config file what dates to sort the photos into.
