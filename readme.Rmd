@@ -1,0 +1,58 @@
+---
+title: "Photo-organizer"
+author: "SNTag"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    css: style.css
+    number_sections: false
+    toc: false
+    toc_depth: 3
+    fig_caption: true
+    fig_width: 7
+    fig_height: 4
+    includes:
+      in_header: my_header.tex
+---
+
+# Description
+
+My original photo organizer is being re-written. This is a work in progress.
+
+This script is to deal with a glut of directories filled with photos. It will move each photo into
+one giant directory by scanning through each photo, determining if there is any potential similarity
+to one previously checked, and either moving it (does not exist in final directory), moving with a name
+change (if similarities exist with a photo in final directory but unsure), or nothing (if already in
+the folder).
+
+The script does not care for speed. I would rather not risk losing photos so the script will compare
+photos with a heavy hand. **It will never delete photos**.
+
+Will not handle movies/film just yet. I plan to add that once photos are settled.
+
+This script will eventually have an option to 'organize' the photos & movies into folders.
+
+The script is meant to be run from the command-line. No gui is in development for a while.
+
+# Technical details
+
+## Comparing photos
+
+### To potentially save time, the following photos will be compared first:
+1. Check if a photo in final dir has a similar name. If exists, compare those photos first.
+2. Check if a photo in final dir has a similar creation-date. If exists, compare those photos.
+
+### When comparing photos, the following approach will be taken:
+1. Using vague measure of similarity, compare photos at different rotations. The one with the
+   greatest similarity will be used going forward.
+2. Compare photos using different approaches.
+
+### Options after completing comparisons:
+1. If images are unique, move it to final dir.
+2. If images are unique but the file name is not, move it to final dir with a name change.
+3. If similar images exist, with some level of uncertainty, move to final dir with a name change.
+4. If similar images exist, with strong levels of certainty, do nothing.
+
+## Directories to scan
+The script will take in a single directory to scan and move to the final dir. A text file (as below)
+can be provided as well.
