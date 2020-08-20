@@ -106,7 +106,58 @@ def photo_rotator(image_name):
     #im = Image.open(stuff[1]+image_name)
     #for angle in np.arange(0, 360, 90):
     #    rotated = imutils.rotate(image_file, angle)
- 
+
+
+##### rename_photos #####
+def rename_photos(image_name):
+    """ shuffles through names until a new one is found
+Will call 'name_creator' in a loop until a unique name is found. A unique name is one not found in the output directory (final dir)
+
+    Variables: image_name
+
+Parameters
+----------
+image_name :
+
+
+Returns
+-------
+out : unique image_name
+
+    """
+    boolean_finding = True
+    xy = 0
+
+    while boolean_finding == True:
+        xy = xy + 1
+        new_name = name_creators(image_name, xy)
+
+        boolean_finding = out_data["file"].str.contains(new_name).any()
+    return(new_name)
+
+
+##### name_creator #####
+def name_creator(image_name, xy):
+    """ comes up with new names
+Names it comes up with involve the original name with _(xy) inserted. nothing too fancy.
+
+    Variables: image_name, xy
+
+Parameters
+----------
+image_name :
+
+xy : a string to be implemented in the new name.
+
+
+Returns
+-------
+out :
+
+    """
+
+    new_name = image_name.split(".")
+    new_name = new_name[0] + "_(" + str(xy) + ")" + "." + new_name[1]
 
 
 ##### compare_photos #####
@@ -119,6 +170,7 @@ steps:
 2. determine optimal rotation
 3. rough analysis
 4. harsh analysis
+5. move image
 
     Variables:
 
@@ -133,12 +185,12 @@ steps:
 
     #! step 4
 
-
+    #! step 5
+    new_name = rename_photos(image_name, xy)
+    save_image(image_name, stuff[1], new_name)
 
 
 #----------|program|----------#
-
-
 in_data =photo_cataloger(stuff[0])
 out_data=photo_cataloger(stuff[1])
 
