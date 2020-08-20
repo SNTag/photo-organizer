@@ -23,6 +23,139 @@ import pandas as pd
 import os
 import subprocess
 from os import walk
+from PIL import Image
+import cv2
+import numpy as np
+import imutils
+
+
+### required variables: final_dir, search_dir
+stuff = arg[1].split(',')
+for item in stuff:
+    exec(item)
+
+
+#----------|Functions|----------#
+##### get_date_taken #####
+def get_date_taken(path):
+    """ gets the date a photo was taken
+    Variables: path
+
+Parameters
+----------
+path : where to look for the photo
+
+
+Returns
+-------
+out : image date
+
+    """
+    return Image.open(path)._getexif()[36867]
+
+
+##### photo_cataloger #####
+def photo_cataloger(path):
+    """ Generates a csv of photos in a directory
+Generates a csv file of all photo filenames and creation date in a directory. This information is used downstream, enabling faster search functions.
+    """
+    data = []
+    for file in sorted(os.listdir(path)):
+        photo_date = get_date_taken(path+file) #### This line should do it. !!!! Need to append creation-date metadata !!!!
+        data.append((file, photo_date))
+
+    data = pd.DataFrame(data = data)
+    data.columns = ["file","date"]
+    return(data)
+
+
+##### photo_finder #####
+def photo_finder(image_name, in_data, out_data):
+    """ when given a photo, looks for similar in final dir
+looks for:
+- same name
+- creation date
+    """
+    #! search for images with the same name.
+    file_names = []
+    for i in range(len(in_data)):
+        tmpVar=in_data.iloc[i][0]
+
+        #! looks up tmpVar in output for exact string match
+        boolean_finding = out_data["file"].str.contains(tmpVar).any()
+        if boolean_finding:
+            file_names.append(tmpVar)
+            break
+
+    #! search for images with the same creation date
+    #for i in range(len(in_data)):
+
+    return(file_names)
+
+
+##### photo_rotator #####
+def photo_rotator(image_name):
+    #! loop over rotation angles.
+    image_file = cv2.imread(stuff[1]+image_name)
+    for angle in np.arange(0, 360, 90):
+        rotated = imutils.rotate(image_file, angle)
+        if (image_file == rotated).all():
+            return(rotated)
+
+    #! if files are slightly different due to photoediting
+    #im = Image.open(stuff[1]+image_name)
+    #for angle in np.arange(0, 360, 90):
+    #    rotated = imutils.rotate(image_file, angle)
+ 
+
+
+##### compare_photos #####
+def compare_photos(image_name, in_data, out_data):
+    """ Organizes the photo comparison
+The goal is to rapidly dismiss dismiss disimilar photos through a rough analysis. If it is worth looking further, a harsh analysis will decide how to handle the photos.
+
+steps:
+1. determines which files to compare.
+2. determine optimal rotation
+3. rough analysis
+4. harsh analysis
+
+    Variables:
+
+    """
+    #! step 1
+    to_compare = photo_finder(image_name, in_data,out_data)
+
+    #! step 2
+    optimal_rotation = photo_rotator(image_name)
+
+    #! step 3
+
+    #! step 4
+
+
+
+
+#----------|program|----------#
+
+
+in_data =photo_cataloger(stuff[0])
+out_data=photo_cataloger(stuff[1])
+
+for (i in range(in_data)):
+    image_name = in_data.iloc[i][0]
+    compare_photos(image_name)
+
+
+
+
+
+
+
+
+
+#----------|archived process|----------#
+
 
 
 ## background processes like prepping config.csv, setting up paths, making userPath directory
